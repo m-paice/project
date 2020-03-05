@@ -1,6 +1,7 @@
 const { Router } = require('express');
 
-// const auth = require('../middleware/auth');
+const auth = require('../middleware/auth');
+const { generateHash } = require('../utils/hash');
 
 class BaseController {
   constructor(path, model) {
@@ -58,6 +59,9 @@ class BaseController {
    * @returns Promise<Object>
    */
   async store(req, res) {
+    if (req.body.password) {
+      req.body.password = await generateHash(req.body.password);
+    }
     try {
       const response = await this.model.create(req.body);
 
