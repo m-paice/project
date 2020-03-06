@@ -1,6 +1,7 @@
 const { Router } = require('express');
 
 const auth = require('../middleware/auth');
+const paginated = require('../middleware/paginated');
 const { generateHash } = require('../utils/hash');
 
 class BaseController {
@@ -10,18 +11,15 @@ class BaseController {
   }
 
   /**
-   * Listar todos os registros
+   * Listar todos os registros paginados
    * @param {object} req
    * @param {object} res
    *
    * @returns Promise<Array>
    */
   async index(req, res) {
-    const { query } = req;
     try {
-      const response = await this.model.findAll(query);
-
-      return res.json(response);
+      return res.json(res.paginatedResults);
     } catch (error) {
       return res.status(500).json({
         message: error.toString(),
@@ -127,7 +125,7 @@ class BaseController {
   routes() {
     const routes = Router();
 
-    routes.get(`/${this.path}`, this.index.bind(this));
+    routes.get(`/${this.path}`, paginated(this.model), this.index.bind(this));
     routes.get(`/${this.path}/:id`, this.show.bind(this));
     routes.post(`/${this.path}`, this.store.bind(this));
     routes.put(`/${this.path}/:id`, this.update.bind(this));
