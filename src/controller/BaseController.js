@@ -19,7 +19,7 @@ class BaseController {
   async index(req, res) {
     const { query } = req;
     try {
-      const response = await this.model.findAll({ ...query });
+      const response = await this.model.findAll(query);
 
       return res.json(response);
     } catch (error) {
@@ -84,12 +84,13 @@ class BaseController {
     const { id } = req.params;
     const { body, query } = req;
     try {
-      const response = await this.model.update(body, {
-        where: {
-          id,
-        },
+      await this.model.update(body, {
+        where: { id },
         ...query,
-      });
+      },
+      { returning: true });
+
+      const response = await this.model.findByPk(id, query);
 
       return res.json(response);
     } catch (error) {

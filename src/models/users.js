@@ -11,15 +11,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: 'users',
     defaultScope: {
-      // attributes: { exclude: ['password'] },
+      attributes: { exclude: ['password'] },
     },
   });
 
-  //   Users.associate = (models) => {
-  //     Users.hasMany(models.posts, { foreignKey: 'authorId', as: 'post' });
-  //     Users.hasMany(models.comments, { foreignKey: 'authorId', as: 'comment' });
-  //     Users.hasOne(models.files, { foreignKey: 'authorId', as: 'file' });
-  //   };
+  Users.associate = (models) => {
+    Users.hasMany(models.events, { foreignKey: 'userId', as: 'events' });
+  };
 
   return Users;
 };
